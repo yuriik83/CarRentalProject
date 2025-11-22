@@ -1,30 +1,19 @@
 package com.example.carrental.mapper;
 
-import org.springframework.stereotype.Component;
-import com.example.carrental.entity.Car;
 import com.example.carrental.dto.CarDto;
+import com.example.carrental.entity.Car;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-@Component
-public class CarMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface CarMapper {
     
-    public CarDto toDto(Car entity) {
-        if (entity == null) return null;
-        
-        CarDto dto = new CarDto();
-        dto.setId(entity.getId());
-        dto.setCarModelId(entity.getCarModel() != null ? entity.getCarModel().getId() : null);
-        dto.setLocationId(entity.getLocation() != null ? entity.getLocation().getId() : null);
-        dto.setLicensePlate(entity.getLicensePlate());
-        dto.setStatus(entity.getStatus());
-        return dto;
-    }
-
-    public Car toEntity(CarDto dto) {
-        if (dto == null) return null;
-        
-        Car entity = new Car();
-        entity.setLicensePlate(dto.getLicensePlate());
-        entity.setStatus(dto.getStatus());
-        return entity;
-    }
+    @Mapping(source = "carModel.id", target = "carModelId")
+    @Mapping(source = "location.id", target = "locationId")
+    CarDto toDto(Car entity);
+    
+    @Mapping(source = "carModelId", target = "carModel.id")
+    @Mapping(source = "locationId", target = "location.id")
+    Car toEntity(CarDto dto);
 }

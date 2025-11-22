@@ -1,41 +1,69 @@
 package com.example.carrental.service;
 
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.entity.Car;
-import com.example.carrental.entity.CarModel;
-import com.example.carrental.entity.Location;
+import com.example.carrental.mapper.CarMapper;
 import com.example.carrental.repository.CarRepository;
 import com.example.carrental.repository.CarModelRepository;
 import com.example.carrental.repository.LocationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CarService {
-    private final CarRepository repo;
-    private final CarModelRepository modelRepo;
-    private final LocationRepository locationRepo;
-
-    public CarService(CarRepository repo, CarModelRepository modelRepo, LocationRepository locationRepo){
-        this.repo = repo; this.modelRepo = modelRepo; this.locationRepo = locationRepo;
-    }
-
-    public List<Car> findAll(){ return repo.findAll(); }
-    public Car findById(Long id){ return repo.findById(id).orElse(null); }
-
-    @Transactional
-    public Car save(Car car){
-        if (car.getCarModel() != null && car.getCarModel().getId() != null){
-            car.setCarModel(modelRepo.getReferenceById(car.getCarModel().getId()));
-        }
-        if (car.getLocation() != null && car.getLocation().getId() != null){
-            car.setLocation(locationRepo.getReferenceById(car.getLocation().getId()));
-        }
-        return repo.save(car);
+    
+    private final CarRepository repository;
+    private final CarMapper mapper;
+    private final CarModelRepository carModelRepository;
+    private final LocationRepository locationRepository;
+    
+    public List<CarDto> findAll() {
+        return repository.findAll().stream()
+                .map(mapper::toDto)
+                .toList();
     }
     
-    @Transactional
-    public void delete(Long id){ repo.deleteById(id); }
+    public Optional<CarDto> findById(Long id) {
+        return repository.findById(id)
+                .map(mapper::toDto);
+    }
+    
+    public CarDto save(CarDto dto) {
+        Car entity = mapper.toEntity(dto);
+        if (dto.getCarModelId() != null) {
+            entity.setCarModel(carModelRepository.findById(dto.getCarModelId()).orElse(null));
+        }
+        if (dto.getLocationId() != null) {
+            entity.setLocation(locationRepository.findById(dto.getLocationId()).orElse(null));
+        }
+        Car saved = repository.save(entity);
+        return mapper.toDto(saved);
+    }
+    
+    public Optional<CarDto> update(Long id, CarDto dto) {
+        return repository.findById(id)
+                .map(existing -> {
+                    existing.setLicensePlate(dto.getLicensePlate());
+                    existing.setStatus(dto.getStatus());
+                    if (dto.getCarModelId() != null) {
+                        existing.setCarModel(carModelRepository.findById(dto.getCarModelId()).orElse(null));
+                    }
+                    if (dto.getLocationId() != null) {
+                        existing.setLocation(locationRepository.findById(dto.getLocationId()).orElse(null));
+                    }
+                    return mapper.toDto(repository.save(existing));
+                });
+    }
+    
+    public boolean deleteById(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

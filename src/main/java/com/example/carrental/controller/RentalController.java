@@ -1,7 +1,8 @@
 package com.example.carrental.controller;
 
-import com.example.carrental.entity.Rental;
+import com.example.carrental.dto.RentalDto;
 import com.example.carrental.service.RentalService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +14,27 @@ public class RentalController {
     public RentalController(RentalService service){ this.service = service; }
 
     @GetMapping
-    public List<Rental> all(){ return service.findAll(); }
+    public List<RentalDto> all(){ return service.findAll(); }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RentalDto> get(@PathVariable Long id){ 
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @PostMapping
-    public Rental create(@RequestBody Rental r){ return service.save(r); }
+    public RentalDto create(@RequestBody RentalDto dto){ return service.save(dto); }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RentalDto> update(@PathVariable Long id, @RequestBody RentalDto dto){
+        return service.update(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){ 
+        return service.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
 }

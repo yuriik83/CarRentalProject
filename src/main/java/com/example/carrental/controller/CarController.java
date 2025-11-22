@@ -1,7 +1,8 @@
 package com.example.carrental.controller;
 
-import com.example.carrental.entity.Car;
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.service.CarService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,20 +17,27 @@ public class CarController {
     }
 
     @GetMapping
-    public List<Car> findAll(){ return service.findAll(); }
+    public List<CarDto> findAll(){ return service.findAll(); }
 
     @GetMapping("/{id}")
-    public Car findById(@PathVariable Long id){ return service.findById(id); }
+    public ResponseEntity<CarDto> findById(@PathVariable Long id){ 
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @PostMapping
-    public Car create(@RequestBody Car car){ return service.save(car); }
+    public CarDto create(@RequestBody CarDto dto){ return service.save(dto); }
 
     @PutMapping("/{id}")
-    public Car update(@PathVariable Long id, @RequestBody Car car){
-        car.setId(id);
-        return service.save(car);
+    public ResponseEntity<CarDto> update(@PathVariable Long id, @RequestBody CarDto dto){
+        return service.update(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){ service.delete(id); }
+    public ResponseEntity<Void> delete(@PathVariable Long id){ 
+        return service.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
 }

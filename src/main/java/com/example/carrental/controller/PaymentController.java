@@ -1,7 +1,8 @@
 package com.example.carrental.controller;
 
-import com.example.carrental.entity.Payment;
+import com.example.carrental.dto.PaymentDto;
 import com.example.carrental.service.PaymentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +14,27 @@ public class PaymentController {
     public PaymentController(PaymentService service){ this.service = service; }
 
     @GetMapping
-    public List<Payment> all(){ return service.findAll(); }
+    public List<PaymentDto> all(){ return service.findAll(); }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PaymentDto> get(@PathVariable Long id){ 
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @PostMapping
-    public Payment create(@RequestBody Payment p){ return service.save(p); }
+    public PaymentDto create(@RequestBody PaymentDto dto){ return service.save(dto); }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PaymentDto> update(@PathVariable Long id, @RequestBody PaymentDto dto){
+        return service.update(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){ 
+        return service.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
 }

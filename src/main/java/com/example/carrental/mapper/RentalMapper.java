@@ -1,18 +1,19 @@
 package com.example.carrental.mapper;
 
+import com.example.carrental.dto.RentalDto;
+import com.example.carrental.entity.Rental;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import com.example.carrental.entity.Rental;
-import com.example.carrental.dto.RentalDto;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RentalMapper {
-
+    
     @Mapping(source = "car.id", target = "carId")
     @Mapping(source = "customer.id", target = "customerId")
     RentalDto toDto(Rental entity);
-
-    @Mapping(target = "car", ignore = true)
-    @Mapping(target = "customer", ignore = true)
+    
+    @Mapping(source = "carId", target = "car.id")
+    @Mapping(source = "customerId", target = "customer.id")
     Rental toEntity(RentalDto dto);
 }

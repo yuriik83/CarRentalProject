@@ -1,39 +1,70 @@
 package com.example.carrental.service;
 
+import com.example.carrental.dto.RentalDto;
 import com.example.carrental.entity.Rental;
-import com.example.carrental.entity.Car;
-import com.example.carrental.entity.Customer;
+import com.example.carrental.mapper.RentalMapper;
 import com.example.carrental.repository.RentalRepository;
 import com.example.carrental.repository.CarRepository;
 import com.example.carrental.repository.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RentalService {
-    private final RentalRepository repo;
-    private final CarRepository carRepo;
-    private final CustomerRepository customerRepo;
-
-    public RentalService(RentalRepository repo, CarRepository carRepo, CustomerRepository customerRepo){
-        this.repo = repo; this.carRepo = carRepo; this.customerRepo = customerRepo;
+    
+    private final RentalRepository repository;
+    private final RentalMapper mapper;
+    private final CarRepository carRepository;
+    private final CustomerRepository customerRepository;
+    
+    public List<RentalDto> findAll() {
+        return repository.findAll().stream()
+                .map(mapper::toDto)
+                .toList();
     }
-
-    public List<Rental> findAll(){ return repo.findAll(); }
-    public Rental findById(Long id){ return repo.findById(id).orElse(null); }
-
-    public Rental save(Rental r){
-        if (r.getCar() != null && r.getCar().getId() != null){
-            Car c = carRepo.findById(r.getCar().getId()).orElse(null);
-            r.setCar(c);
-            if (c != null) c.setStatus("Rented");
-        }
-        if (r.getCustomer() != null && r.getCustomer().getId() != null){
-            Customer cu = customerRepo.findById(r.getCustomer().getId()).orElse(null);
-            r.setCustomer(cu);
-        }
-        return repo.save(r);
+    
+    public Optional<RentalDto> findById(Long id) {
+        return repository.findById(id)
+                .map(mapper::toDto);
     }
-    public void delete(Long id){ repo.deleteById(id); }
+    
+    public RentalDto save(RentalDto dto) {
+        Rental entity = mapper.toEntity(dto);
+        if (dto.getCarId() != null) {
+            entity.setCar(carRepository.findById(dto.getCarId()).orElse(null));
+        }
+        if (dto.getCustomerId() != null) {
+            entity.setCustomer(customerRepository.findById(dto.getCustomerId()).orElse(null));
+        }
+        Rental saved = repository.save(entity);
+        return mapper.toDto(saved);
+    }
+    
+    public Optional<RentalDto> update(Long id, RentalDto dto) {
+        return repository.findById(id)
+                .map(existing -> {
+                    existing.setStartDate(dto.getStartDate());
+                    existing.setEndDate(dto.getEndDate());
+                    existing.setTotalCost(dto.getTotalCost());
+                    if (dto.getCarId() != null) {
+                        existing.setCar(carRepository.findById(dto.getCarId()).orElse(null));
+                    }
+                    if (dto.getCustomerId() != null) {
+                        existing.setCustomer(customerRepository.findById(dto.getCustomerId()).orElse(null));
+                    }
+                    return mapper.toDto(repository.save(existing));
+                });
+    }
+    
+    public boolean deleteById(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
