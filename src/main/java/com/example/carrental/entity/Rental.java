@@ -1,14 +1,18 @@
 package com.example.carrental.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class Rental {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +29,21 @@ public class Rental {
 
     public long getDurationDays() {
         if (startDate != null && endDate != null) {
-            return java.time.Duration.between(startDate, endDate).toDays();
+            return Duration.between(startDate, endDate).toDays();
         }
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rental rental = (Rental) o;
+        return id != null && id.equals(rental.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

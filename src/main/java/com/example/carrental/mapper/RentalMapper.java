@@ -7,8 +7,12 @@ import com.example.carrental.dto.RentalDto;
 
 @Mapper(componentModel = "spring")
 public interface RentalMapper {
+
     @Mapping(source = "car.id", target = "carId")
     @Mapping(source = "customer.id", target = "customerId")
     RentalDto toDto(Rental entity);
+
+    @Mapping(target = "car", ignore = true)
+    @Mapping(target = "customer", ignore = true)
     Rental toEntity(RentalDto dto);
 }

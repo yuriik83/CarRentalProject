@@ -7,10 +7,12 @@ import com.example.carrental.repository.CarRepository;
 import com.example.carrental.repository.CarModelRepository;
 import com.example.carrental.repository.LocationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CarService {
     private final CarRepository repo;
     private final CarModelRepository modelRepo;
@@ -23,16 +25,17 @@ public class CarService {
     public List<Car> findAll(){ return repo.findAll(); }
     public Car findById(Long id){ return repo.findById(id).orElse(null); }
 
-    public Car save(Car car){ // ensure associations are managed if ids present
+    @Transactional
+    public Car save(Car car){
         if (car.getCarModel() != null && car.getCarModel().getId() != null){
-            CarModel m = modelRepo.findById(car.getCarModel().getId()).orElse(null);
-            car.setCarModel(m);
+            car.setCarModel(modelRepo.getReferenceById(car.getCarModel().getId()));
         }
         if (car.getLocation() != null && car.getLocation().getId() != null){
-            Location l = locationRepo.findById(car.getLocation().getId()).orElse(null);
-            car.setLocation(l);
+            car.setLocation(locationRepo.getReferenceById(car.getLocation().getId()));
         }
         return repo.save(car);
     }
+    
+    @Transactional
     public void delete(Long id){ repo.deleteById(id); }
 }

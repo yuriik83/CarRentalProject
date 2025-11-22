@@ -5,6 +5,7 @@ import com.example.carrental.entity.Customer;
 import com.example.carrental.entity.Role;
 import com.example.carrental.service.CarService;
 import com.example.carrental.service.CustomerService;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @RestController
 @RequestMapping("/api/cars")
 public class CarController {
