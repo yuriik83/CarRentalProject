@@ -2,6 +2,8 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.CarModelDto;
 import com.example.carrental.service.CarModelService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +11,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/carmodels")
+@CrossOrigin(origins = "*")
 public class CarModelController {
     private final CarModelService service;
-    public CarModelController(CarModelService service){ this.service = service; }
+    
+    public CarModelController(CarModelService service) { 
+        this.service = service; 
+    }
 
     @GetMapping
     public List<CarModelDto> all(){ return service.findAll(); }
@@ -24,10 +30,13 @@ public class CarModelController {
     }
 
     @PostMapping
-    public CarModelDto create(@RequestBody CarModelDto dto){ return service.save(dto); }
+    public ResponseEntity<CarModelDto> create(@Valid @RequestBody CarModelDto dto) { 
+        CarModelDto created = service.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CarModelDto> update(@PathVariable Long id, @RequestBody CarModelDto dto){
+    public ResponseEntity<CarModelDto> update(@PathVariable Long id, @Valid @RequestBody CarModelDto dto){
         return service.update(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

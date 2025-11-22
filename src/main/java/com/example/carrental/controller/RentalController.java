@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.RentalDto;
 import com.example.carrental.service.RentalService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,22 +10,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rentals")
+@CrossOrigin(origins = "*")
 public class RentalController {
     private final RentalService service;
-    public RentalController(RentalService service){ this.service = service; }
+    
+    public RentalController(RentalService service) { 
+        this.service = service; 
+    }
 
     @GetMapping
-    public List<RentalDto> all(){ return service.findAll(); }
+    public List<RentalDto> all() { 
+        return service.findAll(); 
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RentalDto> get(@PathVariable Long id){ 
+    public ResponseEntity<RentalDto> get(@PathVariable Long id) { 
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public RentalDto create(@RequestBody RentalDto dto){ return service.save(dto); }
+    public ResponseEntity<RentalDto> create(@RequestBody RentalDto dto) { 
+        RentalDto created = service.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<RentalDto> update(@PathVariable Long id, @RequestBody RentalDto dto){

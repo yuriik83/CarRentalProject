@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.CarDto;
 import com.example.carrental.service.CarService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cars")
+@CrossOrigin(origins = "*")
 public class CarController {
     private final CarService service;
 
@@ -27,7 +29,10 @@ public class CarController {
     }
 
     @PostMapping
-    public CarDto create(@RequestBody CarDto dto){ return service.save(dto); }
+    public ResponseEntity<CarDto> create(@RequestBody CarDto dto) { 
+        CarDto created = service.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<CarDto> update(@PathVariable Long id, @RequestBody CarDto dto){

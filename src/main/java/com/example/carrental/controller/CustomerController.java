@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.CustomerDto;
 import com.example.carrental.service.CustomerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
+@CrossOrigin(origins = "*")
 public class CustomerController {
     private final CustomerService service;
-    public CustomerController(CustomerService service){ this.service = service; }
+    
+    public CustomerController(CustomerService service) { 
+        this.service = service; 
+    }
 
     @GetMapping
     public List<CustomerDto> all(){ return service.findAll(); }
@@ -24,7 +29,10 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CustomerDto create(@RequestBody CustomerDto dto){ return service.save(dto); }
+    public ResponseEntity<CustomerDto> create(@RequestBody CustomerDto dto) { 
+        CustomerDto created = service.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDto> update(@PathVariable Long id, @RequestBody CustomerDto dto){
