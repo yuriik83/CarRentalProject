@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.LocationDto;
 import com.example.carrental.service.LocationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/locations")
 @CrossOrigin(origins = "*")
+@Tag(name = "Locations", description = "Управление локациями")
 public class LocationController {
     private final LocationService service;
     

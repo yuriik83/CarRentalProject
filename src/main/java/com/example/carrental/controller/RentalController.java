@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.dto.RentalDto;
 import com.example.carrental.service.RentalService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rentals")
 @CrossOrigin(origins = "*")
+@Tag(name = "Rentals", description = "Управление арендой")
 public class RentalController {
     private final RentalService service;
     

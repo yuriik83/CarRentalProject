@@ -1,5 +1,7 @@
 package com.example.carrental.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +11,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
+@Tag(name = "System", description = "Системная информация")
 public class ApiController {
 
     @GetMapping("/info")
+    @Operation(summary = "Получить информацию о API")
     public ResponseEntity<Map<String, Object>> getApiInfo() {
         Map<String, Object> info = new HashMap<>();
         info.put("application", "Car Rental System");
@@ -37,6 +41,7 @@ public class ApiController {
     }
 
     @GetMapping("/health")
+    @Operation(summary = "Проверка здоровья системы")
     public ResponseEntity<Map<String, String>> healthCheck() {
         Map<String, String> health = new HashMap<>();
         health.put("status", "UP");
