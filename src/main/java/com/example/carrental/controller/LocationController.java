@@ -3,6 +3,7 @@ package com.example.carrental.controller;
 import com.example.carrental.dto.LocationDto;
 import com.example.carrental.service.LocationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +34,13 @@ public class LocationController {
     }
 
     @PostMapping
-    public ResponseEntity<LocationDto> create(@RequestBody LocationDto dto) { 
+    public ResponseEntity<LocationDto> create(@Valid @RequestBody LocationDto dto) { 
         LocationDto created = service.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LocationDto> update(@PathVariable Long id, @RequestBody LocationDto dto){
+    public ResponseEntity<LocationDto> update(@PathVariable Long id, @Valid @RequestBody LocationDto dto){
         return service.update(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

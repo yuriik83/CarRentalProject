@@ -3,6 +3,7 @@ package com.example.carrental.controller;
 import com.example.carrental.dto.RentalDto;
 import com.example.carrental.service.RentalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +34,13 @@ public class RentalController {
     }
 
     @PostMapping
-    public ResponseEntity<RentalDto> create(@RequestBody RentalDto dto) { 
+    public ResponseEntity<RentalDto> create(@Valid @RequestBody RentalDto dto) { 
         RentalDto created = service.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RentalDto> update(@PathVariable Long id, @RequestBody RentalDto dto){
+    public ResponseEntity<RentalDto> update(@PathVariable Long id, @Valid @RequestBody RentalDto dto){
         return service.update(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
