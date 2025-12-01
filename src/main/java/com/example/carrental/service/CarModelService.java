@@ -5,6 +5,8 @@ import com.example.carrental.entity.CarModel;
 import com.example.carrental.mapper.CarModelMapper;
 import com.example.carrental.repository.CarModelRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,11 @@ public class CarModelService {
     
     private final CarModelRepository repository;
     private final CarModelMapper mapper;
+    
+    public Page<CarModelDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
+    }
     
     public List<CarModelDto> findAll() {
         return repository.findAll().stream()

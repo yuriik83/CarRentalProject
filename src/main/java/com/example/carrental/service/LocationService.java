@@ -5,6 +5,8 @@ import com.example.carrental.entity.Location;
 import com.example.carrental.mapper.LocationMapper;
 import com.example.carrental.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,11 @@ public class LocationService {
     
     private final LocationRepository repository;
     private final LocationMapper mapper;
+    
+    public Page<LocationDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
+    }
     
     public List<LocationDto> findAll() {
         return repository.findAll().stream()

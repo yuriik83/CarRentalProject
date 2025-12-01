@@ -4,6 +4,8 @@ import com.example.carrental.dto.LocationDto;
 import com.example.carrental.service.LocationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,12 @@ public class LocationController {
     }
 
     @GetMapping
-    public List<LocationDto> all() { 
+    public Page<LocationDto> all(Pageable pageable) { 
+        return service.findAll(pageable); 
+    }
+    
+    @GetMapping("/all")
+    public List<LocationDto> allWithoutPagination() { 
         return service.findAll(); 
     }
 

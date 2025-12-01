@@ -6,6 +6,8 @@ import com.example.carrental.mapper.PaymentMapper;
 import com.example.carrental.repository.PaymentRepository;
 import com.example.carrental.repository.RentalRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,11 @@ public class PaymentService {
     private final PaymentRepository repository;
     private final PaymentMapper mapper;
     private final RentalRepository rentalRepository;
+    
+    public Page<PaymentDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
+    }
     
     public List<PaymentDto> findAll() {
         return repository.findAll().stream()

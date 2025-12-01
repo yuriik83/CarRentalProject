@@ -7,6 +7,8 @@ import com.example.carrental.repository.CarRepository;
 import com.example.carrental.repository.CarModelRepository;
 import com.example.carrental.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,11 @@ public class CarService {
     private final CarMapper mapper;
     private final CarModelRepository carModelRepository;
     private final LocationRepository locationRepository;
+    
+    public Page<CarDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toDto);
+    }
     
     public List<CarDto> findAll() {
         return repository.findAll().stream()

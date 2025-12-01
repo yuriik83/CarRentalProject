@@ -4,6 +4,8 @@ import com.example.carrental.dto.PaymentDto;
 import com.example.carrental.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,12 @@ public class PaymentController {
     }
 
     @GetMapping
-    public List<PaymentDto> all() { 
+    public Page<PaymentDto> all(Pageable pageable) { 
+        return service.findAll(pageable); 
+    }
+    
+    @GetMapping("/all")
+    public List<PaymentDto> allWithoutPagination() { 
         return service.findAll(); 
     }
 

@@ -4,6 +4,8 @@ import com.example.carrental.dto.CarDto;
 import com.example.carrental.service.CarService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,10 @@ public class CarController {
     }
 
     @GetMapping
-    public List<CarDto> findAll(){ return service.findAll(); }
+    public Page<CarDto> findAll(Pageable pageable){ return service.findAll(pageable); }
+    
+    @GetMapping("/all")
+    public List<CarDto> findAllWithoutPagination(){ return service.findAll(); }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarDto> findById(@PathVariable Long id){ 
