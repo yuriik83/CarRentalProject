@@ -30,12 +30,16 @@ public class ApiController {
                 "payments", "/api/payments - Управление платежами"
             ),
             Map.of(
-                "spring_boot", "3.2.4",
+                "spring_boot", "3.3.5",
                 "jpa", "Hibernate 6.4.4",
                 "mapstruct", "1.5.5",
                 "database", "PostgreSQL",
+                "security", "Spring Security с базовой аутентификацией",
+                "logging", "AOP + Logback",
                 "dto_mapping", "Автоматический маппинг с MapStruct",
-                "crud_operations", "Полный CRUD для всех сущностей"
+                "crud_operations", "Полный CRUD для всех сущностей",
+                "pagination", "Поддержка пагинации",
+                "validation", "Jakarta Validation"
             )
         );
         return ResponseEntity.ok(info);

@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,27 +30,28 @@ public class CustomerController {
     public List<CustomerDto> allWithoutPagination(){ return service.findAll(); }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> get(@PathVariable Long id){ 
+    public CustomerDto get(@PathVariable Long id){ 
         return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDto> create(@Valid @RequestBody CustomerDto dto) { 
-        CustomerDto created = service.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDto create(@Valid @RequestBody CustomerDto dto) { 
+        return service.save(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> update(@PathVariable Long id, @Valid @RequestBody CustomerDto dto){
+    public CustomerDto update(@PathVariable Long id, @Valid @RequestBody CustomerDto dto){
         return service.update(id, dto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){ 
-        return service.deleteById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){ 
+        if (!service.deleteById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
