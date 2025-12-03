@@ -12,6 +12,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  aop:
+    proxy-target-class: true
 
 server:
   port: 8080
