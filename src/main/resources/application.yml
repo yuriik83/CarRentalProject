@@ -41,3 +41,13 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
+
+spring.security:
+  user:
+    name: user
+    password: password
+    roles: USER
+
+logging:
+  level:
+    org.springframework.security: DEBUG
