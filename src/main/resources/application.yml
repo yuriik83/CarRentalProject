@@ -51,3 +51,7 @@ spring.security:
 logging:
   level:
     org.springframework.security: DEBUG
+
+jwt:
+  secret: mySecretKeyForJWTTokenGeneration
+  expiration: 86400
